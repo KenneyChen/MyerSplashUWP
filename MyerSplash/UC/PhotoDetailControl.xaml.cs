@@ -68,8 +68,40 @@ namespace MyerSplash.UC
             InitializeComponent();
             InitComposition();
             this.DataContext = this;
+            this.SizeChanged += PhotoDetailControl_SizeChanged;
             _dataTransferManager = DataTransferManager.GetForCurrentView();
             _dataTransferManager.DataRequested += _dataTransferManager_DataRequested;
+        }
+
+        private void PhotoDetailControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var windowRect = Window.Current.Bounds;
+
+            var R1 = 3d / 2d;
+            var R2 = windowRect.Width / (windowRect.Height - 200);
+
+            var drawingWidth = 0d;
+            var drawingHeight = 0d;
+
+            var height1 = (R2 / R1) * (windowRect.Height - 200);
+            var height2 = (windowRect.Height - 200);
+
+            drawingHeight = Math.Min(height1, height2) - 20f;
+            drawingWidth = drawingHeight * R1;
+
+            if (this.DetailContentGrid.Width != drawingWidth)
+            {
+                this.DetailContentGrid.Width = drawingWidth;
+            }
+            if (this.DetailContentGrid.Height != drawingHeight + 100)
+            {
+                this.DetailContentGrid.Height = drawingHeight + 100;
+            }
+        }
+
+        public Rect GetRect()
+        {
+            return new Rect(0, 0, DetailContentGrid.Width, DetailContentGrid.Height - 100);
         }
 
         private async void _dataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
